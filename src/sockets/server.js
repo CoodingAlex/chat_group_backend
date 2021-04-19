@@ -5,7 +5,7 @@ function sockets(io) {
 		//The default channel is the welcome channerl
 		socket.join('welcome')
 		io.to('welcome').emit('joinedRoom', {room: 'welcome', users:[]})
-		io.to('welcome').emit('message', { room: 'welcome', message: 'a new user has joined to the chat' })
+		io.to('welcome').emit('message', { room: 'welcome', message: 'Welcome to the chat new user' })
 		addUser(socket)
 
 		socket.on('joinRoom', data => {
@@ -15,7 +15,6 @@ function sockets(io) {
 		})
 
 		socket.on('message', data => {
-			console.log(data)
 			io.to(data.room).emit('message', {room: data.room, message: data.message})
 		})
 	})

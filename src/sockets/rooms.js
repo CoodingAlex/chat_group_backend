@@ -18,7 +18,6 @@ function addRoom(name) {
 function addUserToRoom(name, user) {
 	const currentRoom = rooms.filter(room => room.name === name)[0]
 
-	console.log(currentRoom.users)
   if (currentRoom.users?.indexOf(user) === -1) {
     rooms.map((room) => {
       if (room.name === name) {
