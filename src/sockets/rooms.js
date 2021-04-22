@@ -6,7 +6,14 @@ function createRoom(name) {
     users: [],
   }
 }
-
+function roomExists(name) {
+  
+  const existsRoom = rooms.filter((room) => room.name === name)
+  if (existsRoom.length === 0) {
+    return false
+  }
+  return true
+}
 function addRoom(name) {
   const existsRoom = rooms.filter((room) => room.name === name)
   if (existsRoom.length === 0) {
@@ -31,8 +38,11 @@ function getRoomUsers(name) {
   const filtered = rooms.filter((room) => room.name === name)
   return filtered[0]
 }
+
 module.exports = {
   addRoom,
   addUserToRoom,
   getRoomUsers,
+  rooms,
+  roomExists
 }
