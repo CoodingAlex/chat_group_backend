@@ -18,6 +18,7 @@ function sockets(io) {
       }
 
       const { users } = joinRoom(socket, data.room)
+      console.log(users)
       //Check if is a new room
       socket.join(data.room)
       io.to(data.room).emit('joinedRoom', { room: data.room, users })
@@ -33,6 +34,9 @@ function sockets(io) {
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
+        timeStamp: new Date().toDateString(),
+        name: "Alex"
       })
     })
   })
