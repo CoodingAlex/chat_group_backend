@@ -1,17 +1,25 @@
 const { addUser, joinRoom } = require('./users')
 const { roomExists } = require('./rooms')
-
+const cookies = require('cookie-parser')
 function sockets(io) {
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
+    const cookief = socket.handshake.query
+    const cookiesp = cookies.JSONCookie(cookief)
+    console.log(cookief);
     socket.join('welcome')
     io.to('welcome').emit('joinedRoom', { room: 'welcome', users: [] })
     io.to('welcome').emit('message', {
       room: 'welcome',
       message: 'Welcome to the chat new user',
+      name:"Welcome bot",
+      photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
+      timeStamp: new Date().toDateString(),
     })
     addUser(socket)
+    socket.on('register', data => {
 
+    })
     socket.on('joinRoom', (data) => {
       if (!roomExists(data.room)) {
         socket.broadcast.emit('newRoom', { room: data.room })

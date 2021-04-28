@@ -5,7 +5,7 @@ function createUser(id) {
 	return {
 		id,
 		rooms: ['welcome']
-	} 
+	}
 }
 function addUser(socket) {
 	users.push(createUser(socket.id))	
