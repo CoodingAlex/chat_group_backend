@@ -1,14 +1,16 @@
 const { addRoom, addUserToRoom, getRoomUsers } = require('./rooms')
 const users = []
 
-function createUser(id) {
+function createUser(id, name) {
 	return {
 		id,
+        name,
 		rooms: ['welcome']
 	}
 }
-function addUser(socket) {
-	users.push(createUser(socket.id))	
+function addUser(socket, name) {
+
+	users.push(createUser(socket.id,name))	
 }
 
 function joinRoom(socket, room) {
@@ -25,7 +27,13 @@ function joinRoom(socket, room) {
 	//This function returns all the users in the room
 	return getRoomUsers(room)	
 }
+
+function getUser(id) {
+    const user = users.find(item => item.id === id)
+    return user
+}
 module.exports = {
 	addUser,
-	joinRoom
+	joinRoom,
+    getUser
 }

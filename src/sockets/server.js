@@ -1,13 +1,10 @@
-const { addUser, joinRoom } = require('./users')
+const { addUser, joinRoom, getUser } = require('./users')
 const { roomExists } = require('./rooms')
-const cookies = require('cookie-parser')
 function sockets(io) {
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
-    const cookief = socket.handshake.query
-    const cookiesp = cookies.JSONCookie(cookief)
-    console.log(cookief);
     socket.join('welcome')
+    console.log(socket.handshake.query.user);
     io.to('welcome').emit('joinedRoom', { room: 'welcome', users: [] })
     io.to('welcome').emit('message', {
       room: 'welcome',
@@ -16,7 +13,7 @@ function sockets(io) {
       photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
       timeStamp: new Date().toDateString(),
     })
-    addUser(socket)
+    addUser(socket, socket.handshake.query.user)
     socket.on('register', data => {
 
     })
@@ -39,12 +36,14 @@ function sockets(io) {
     })
 
     socket.on('message', (data) => {
+      const user = getUser(socket.id)
+      console.log(user)
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,
         photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
         timeStamp: new Date().toDateString(),
-        name: "Alex"
+        name: user.name
       })
     })
   })

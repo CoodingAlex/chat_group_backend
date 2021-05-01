@@ -15,7 +15,7 @@ module.exports = function authRouter(app) {
         if (req.cookies.user) {
             res.clearCookie('user');
         }
-        res.cookie('user', user, { httpOnly: false });
+        res.cookie('user', user.name, { httpOnly: false });
         res.status(200).json({ message: 'User Registered', user });
     });
 };
