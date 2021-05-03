@@ -1,4 +1,6 @@
 const { addRoom, addUserToRoom, getRoomUsers } = require('./rooms')
+const jsonwetoken = require('jsonwebtoken')
+const { jwt } = require('../config')
 const users = []
 
 function createUser(id, name) {
@@ -8,9 +10,15 @@ function createUser(id, name) {
 		rooms: ['welcome']
 	}
 }
-function addUser(socket, name) {
-
-	users.push(createUser(socket.id,name))	
+async function decryptToken(token) {
+    console.log(token);
+    const user = await jsonwetoken.decode(token, jwt.secret)
+    console.log(user);
+    return user
+}
+async function addUser(socket, token) {
+    const user = await decryptToken(token )
+	users.push(createUser(socket.id,user?.name))	
 }
 
 function joinRoom(socket, room) {

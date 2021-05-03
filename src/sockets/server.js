@@ -4,7 +4,6 @@ function sockets(io) {
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
     socket.join('welcome')
-    console.log(socket.handshake.query.user);
     io.to('welcome').emit('joinedRoom', { room: 'welcome', users: [] })
     io.to('welcome').emit('message', {
       room: 'welcome',
@@ -13,7 +12,8 @@ function sockets(io) {
       photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
       timeStamp: new Date().toDateString(),
     })
-    addUser(socket, socket.handshake.query.user)
+    addUser(socket, socket.handshake.query.token)
+    console.log( socket.handshake.query.token)
     socket.on('register', data => {
 
     })
@@ -23,7 +23,6 @@ function sockets(io) {
       }
 
       const { users } = joinRoom(socket, data.room)
-      console.log(users)
       //Check if is a new room
       socket.join(data.room)
       io.to(data.room).emit('joinedRoom', { room: data.room, users })
@@ -37,7 +36,6 @@ function sockets(io) {
 
     socket.on('message', (data) => {
       const user = getUser(socket.id)
-      console.log(user)
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,

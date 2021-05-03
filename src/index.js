@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser')
 const sockets  = require('./sockets/server')
 const app = express()
 const server = http.createServer(app)
+//error middlewares
+const errorHandler = require('./utils/middlewares/errorHandler')
 //config
 const { db } = require('./config')
 //mongo
@@ -21,6 +23,9 @@ app.use(cookieParser())
 
 
 authRouter(app)
+
+
+app.use(errorHandler)
 const io = socketio(server, {
 	cors: {
 		origin: "http://localhost:3000",
