@@ -1,50 +1,89 @@
-const { addUser, joinRoom, getUser } = require('./users')
-const { roomExists } = require('./rooms')
+const {
+  addUser,
+  joinRoom,
+  getUser,
+  getUserByToken,
+  getUserAvailableRooms,
+  disconnectUser,
+} = require('./users');
+
+const { roomExists } = require('./rooms');
 function sockets(io) {
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
-    socket.join('welcome')
-    io.to('welcome').emit('joinedRoom', { room: 'welcome', users: [] })
+    socket.join('welcome');
+    io.to('welcome').emit('joinedRoom', {
+      room: 'welcome',
+      users: [],
+      description: 'Welcome to chat group!',
+    });
     io.to('welcome').emit('message', {
       room: 'welcome',
       message: 'Welcome to the chat new user',
-      name:"Welcome bot",
-      photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
+      name: 'Pepe el Gallo',
+      photo:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg',
       timeStamp: new Date().toDateString(),
-    })
-    addUser(socket, socket.handshake.query.token)
-    console.log( socket.handshake.query.token)
-    socket.on('register', data => {
+    });
+    addUser(socket, socket.handshake.query.token);
+    socket.on('availableChats', async (data) => {
+      const user = await getUserByToken(data.token);
+      const chats = getUserAvailableRooms(user.name);
 
-    })
-    socket.on('joinRoom', (data) => {
+      io.to(socket.id).emit('availableChats', { chats });
+    });
+    socket.on('joinRoom', async (data) => {
+      const user = await getUserByToken(data.token);
       if (!roomExists(data.room)) {
-        socket.broadcast.emit('newRoom', { room: data.room })
+        socket.broadcast.emit('newRoom', { room: data.room });
       }
+      io.to(data.room).emit('message', {
+        room: data.room,
+        message: `Welcome to the chat ${data.room} ${user.name}`,
+        name: 'Pepe el Gallo',
+        photo:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg',
+        timeStamp: new Date().toDateString(),
+      });
 
-      const { users } = joinRoom(socket, data.room)
+      const { users } = joinRoom(
+        socket,
+        data.room,
+        data.description,
+        user.name
+      );
       //Check if is a new room
-      socket.join(data.room)
-      io.to(data.room).emit('joinedRoom', { room: data.room, users })
-    })
+      socket.join(data.room);
+      io.to(data.room).emit('joinedRoom', {
+        room: data.room,
+        users,
+        description: data.description,
+      });
+    });
 
     socket.on('newRoom', (data) => {
-      socket.join(data.room)
-      const users = joinRoom(socket, data.room)
-      socket.broadcast.emit('newRoom', { room: data.room, users })
-    })
+      socket.join(data.room);
+      const users = joinRoom(socket, data.room, data.description);
+
+      socket.broadcast.emit('newRoom', { room: data.room, users });
+    });
 
     socket.on('message', (data) => {
-      const user = getUser(socket.id)
+      const user = getUser(socket.id);
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,
-        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg",
+        photo:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg',
         timeStamp: new Date().toDateString(),
-        name: user.name
-      })
-    })
-  })
+        name: user.name,
+      });
+    });
+
+    socket.on('disconnect', () => {
+      disconnectUser(socket.id);
+    });
+  });
 }
 
-module.exports = sockets
+module.exports = sockets;

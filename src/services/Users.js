@@ -6,9 +6,8 @@ const jsonwebtoken = require('jsonwebtoken');
 class UserService {
   async createUser(user) {
     const existUser = await this.findOne(user.name);
-    console.log(existUser);
     if (existUser) {
-      throw new Error(boom.conflict('Username already exists'));
+      throw boom.unauthorized('Username already exists');
     }
     const newUser = {
       name: user.name,
@@ -16,10 +15,10 @@ class UserService {
       password: await bcrypt.hash(user.password, 5),
     };
     const createdUser = new User(newUser);
-    const docs = await createdUser.save()
-    delete newUser.password
-    const token = await jsonwebtoken.sign(newUser, jwt.secret)
-    return token
+    const docs = await createdUser.save();
+    delete newUser.password;
+    const token = await jsonwebtoken.sign(newUser, jwt.secret);
+    return token;
   }
 
   async findOne(name) {

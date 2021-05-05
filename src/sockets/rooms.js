@@ -1,42 +1,49 @@
-const rooms = []
+const rooms = [];
 
-function createRoom(name) {
+function createRoom(name, description) {
   return {
     name,
+    description,
     users: [],
-  }
+  };
 }
 function roomExists(name) {
-  
-  const existsRoom = rooms.filter((room) => room.name === name)
+  const existsRoom = rooms.filter((room) => room.name === name);
   if (existsRoom.length === 0) {
-    return false
+    return false;
   }
-  return true
+  return true;
 }
-function addRoom(name) {
-  const existsRoom = rooms.filter((room) => room.name === name)
+function addRoom(name, description) {
+  const existsRoom = rooms.filter((room) => room.name === name);
   if (existsRoom.length === 0) {
-    const newRoom = createRoom(name)
-    rooms.push(newRoom)
+    const newRoom = createRoom(name, description);
+    rooms.push(newRoom);
   }
 }
 
-function addUserToRoom(name, user) {
-	const currentRoom = rooms.filter(room => room.name === name)[0]
+function addUserToRoom(name, user, username) {
+  const currentRoom = rooms.filter((room) => room.name === name)[0];
 
   if (currentRoom.users?.indexOf(user) === -1) {
     rooms.map((room) => {
       if (room.name === name) {
-        room.users.push(user)
+        room.users.push(username);
       }
-    })
+    });
   }
 }
 
 function getRoomUsers(name) {
-  const filtered = rooms.filter((room) => room.name === name)
-  return filtered[0]
+  const filtered = rooms.filter((room) => room.name === name);
+  return filtered[0];
+}
+
+function removeUserFromChats(user) {
+  rooms.map((room) => {
+    const pos = room.users.indexOf(user);
+    room.users.splice(pos, 1);
+  });
 }
 
 module.exports = {
@@ -44,5 +51,7 @@ module.exports = {
   addUserToRoom,
   getRoomUsers,
   rooms,
-  roomExists
-}
+  roomExists,
+  rooms,
+  removeUserFromChats,
+};
