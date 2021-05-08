@@ -22,13 +22,13 @@ function addRoom(name, description) {
   }
 }
 
-function addUserToRoom(name, user, username) {
+function addUserToRoom(name, user, username, photo) {
   const currentRoom = rooms.filter((room) => room.name === name)[0];
 
   if (currentRoom.users?.indexOf(user) === -1) {
     rooms.map((room) => {
       if (room.name === name) {
-        room.users.push(username);
+        room.users.push({ username, photo });
       }
     });
   }
@@ -36,6 +36,7 @@ function addUserToRoom(name, user, username) {
 
 function getRoomUsers(name) {
   const filtered = rooms.filter((room) => room.name === name);
+  console.log(filtered);
   return filtered[0];
 }
 

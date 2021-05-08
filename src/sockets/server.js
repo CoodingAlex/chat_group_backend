@@ -50,7 +50,8 @@ function sockets(io) {
         socket,
         data.room,
         data.description,
-        user.name
+        user.name,
+        data.photo // <----Cambiar esto al un token
       );
       //Check if is a new room
       socket.join(data.room);
@@ -68,13 +69,13 @@ function sockets(io) {
       socket.broadcast.emit('newRoom', { room: data.room, users });
     });
 
-    socket.on('message', (data) => {
-      const user = getUser(socket.id);
+    socket.on('message', async (data) => {
+      const user = await getUserByToken(data.token);
+      console.log(user.photo);
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,
-        photo:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Full_Moon_Luc_Viatour.jpg/1015px-Full_Moon_Luc_Viatour.jpg',
+        photo: user.photo,
         timeStamp: new Date().toDateString(),
         name: user.name,
       });

@@ -26,7 +26,7 @@ async function addUser(socket, token) {
   users.push(createUser(socket.id, user?.name));
 }
 
-function joinRoom(socket, room, description, name) {
+function joinRoom(socket, room, description, name, photo) {
   users.map((user) => {
     if (user.id === socket.id) {
       user.rooms.push(room);
@@ -36,7 +36,7 @@ function joinRoom(socket, room, description, name) {
   addRoom(room, description);
 
   //Add the socket to the romm
-  addUserToRoom(room, socket.id, name);
+  addUserToRoom(room, socket.id, name, photo);
   //This function returns all the users in the room
   return getRoomUsers(room);
 }
