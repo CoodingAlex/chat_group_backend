@@ -9,7 +9,7 @@ const server = http.createServer(app);
 //error middlewares
 const errorHandler = require('./utils/middlewares/errorHandler');
 //config
-const { db, frontendUrl } = require('./config');
+const { db, frontendUrl, port } = require('./config');
 //mongo
 const connectDB = require('./utils/database/connect');
 const mongoUri = `mongodb+srv://${db.user}:${db.password}@${db.host}/${db.database}?retryWrites=true&w=majority`;
@@ -33,6 +33,6 @@ const io = socketio(server, {
 
 sockets(io);
 
-server.listen(8080, () => {
-  console.log('server listening on port 8080');
+server.listen(port, () => {
+  console.log('server listening on port', port);
 });

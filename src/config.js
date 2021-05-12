@@ -13,4 +13,5 @@ module.exports = {
     secret: process.env.JWT_SECRET,
   },
   frontendUrl: process.env.FRONTEND_URL,
+  port: process.env.PORT,
 };
