@@ -36,7 +36,6 @@ function addUserToRoom(name, user, username, photo) {
 
 function getRoomUsers(name) {
   const filtered = rooms.filter((room) => room.name === name);
-  console.log(filtered);
   return filtered[0];
 }
 
@@ -47,6 +46,10 @@ function removeUserFromChats(user) {
   });
 }
 
+function getRoom(name) {
+  return rooms.find((room) => room.name === name);
+}
+
 module.exports = {
   addRoom,
   addUserToRoom,
@@ -55,4 +58,5 @@ module.exports = {
   roomExists,
   rooms,
   removeUserFromChats,
+  getRoom,
 };

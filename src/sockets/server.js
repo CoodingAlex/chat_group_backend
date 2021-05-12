@@ -7,7 +7,7 @@ const {
   disconnectUser,
 } = require('./users');
 
-const { roomExists } = require('./rooms');
+const { roomExists, getRoom } = require('./rooms');
 function sockets(io) {
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
@@ -32,6 +32,7 @@ function sockets(io) {
 
       io.to(socket.id).emit('availableChats', { chats });
     });
+
     socket.on('joinRoom', async (data) => {
       const user = await getUserByToken(data.token);
       if (!roomExists(data.room)) {
@@ -53,12 +54,15 @@ function sockets(io) {
         user.name,
         data.photo // <----Cambiar esto al un token
       );
-      //Check if is a new room
+
       socket.join(data.room);
+
+      //if is a new room, description come with thw data if not, we get the description
+      const room = getRoom(data.room);
       io.to(data.room).emit('joinedRoom', {
         room: data.room,
         users,
-        description: data.description,
+        description: data.description || room.description,
       });
     });
 
@@ -71,7 +75,6 @@ function sockets(io) {
 
     socket.on('message', async (data) => {
       const user = await getUserByToken(data.token);
-      console.log(user.photo);
       io.to(data.room).emit('message', {
         room: data.room,
         message: data.message,

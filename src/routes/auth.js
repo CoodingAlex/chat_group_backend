@@ -37,9 +37,7 @@ module.exports = function authRouter(app) {
     passport.authenticate('basic', { session: false }),
     async (req, res, next) => {
       try {
-        console.log(req.user);
         const token = await encrypt(req.user);
-        console.log(token);
         res.cookie('user', token, { httpOnly: false });
         res.status(200).json({ ...req.user, token });
       } catch (err) {
