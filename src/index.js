@@ -9,7 +9,7 @@ const server = http.createServer(app);
 //error middlewares
 const errorHandler = require('./utils/middlewares/errorHandler');
 //config
-const { db } = require('./config');
+const { db, frontendUrl } = require('./config');
 //mongo
 const connectDB = require('./utils/database/connect');
 const mongoUri = `mongodb+srv://${db.user}:${db.password}@${db.host}/${db.database}?retryWrites=true&w=majority`;
@@ -18,7 +18,7 @@ connectDB(mongoUri);
 //Routes
 const authRouter = require('./routes/auth');
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: frontendUrl, credentials: true }));
 app.use(cookieParser());
 
 authRouter(app);
