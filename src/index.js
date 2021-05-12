@@ -26,7 +26,7 @@ authRouter(app);
 app.use(errorHandler);
 const io = socketio(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: frontendUrl,
     methods: ['GET', 'POST'],
   },
 });
