@@ -1,3 +1,5 @@
+const MessageService = require('../services/Message');
+const messageService = new MessageService();
 const {
   addUser,
   joinRoom,
@@ -7,8 +9,15 @@ const {
   disconnectUser,
 } = require('./users');
 
-const { roomExists, getRoom } = require('./rooms');
-function sockets(io) {
+const ChatService = require('../services/Chat');
+const chatService = new ChatService();
+
+const { roomExists, getRoom, addRoom } = require('./rooms');
+async function sockets(io) {
+  const chats = (await chatService.getAllChats()) || [];
+  chats.forEach((item) => {
+    addRoom(item.name, item.description);
+  });
   io.on('connection', (socket) => {
     //The default channel is the welcome channerl
     socket.join('welcome');
@@ -38,6 +47,7 @@ function sockets(io) {
       if (!roomExists(data.room)) {
         socket.broadcast.emit('newRoom', { room: data.room });
       }
+      await chatService.createChat(data.room, data.description);
       io.to(data.room).emit('message', {
         room: data.room,
         message: `Welcome to the chat ${data.room} ${user.name}`,
@@ -66,22 +76,24 @@ function sockets(io) {
       });
     });
 
-    socket.on('newRoom', (data) => {
+    socket.on('newRoom', async (data) => {
       socket.join(data.room);
       const users = joinRoom(socket, data.room, data.description);
-
       socket.broadcast.emit('newRoom', { room: data.room, users });
     });
 
     socket.on('message', async (data) => {
       const user = await getUserByToken(data.token);
-      io.to(data.room).emit('message', {
+      const message = {
         room: data.room,
         message: data.message,
         photo: user.photo,
         timeStamp: new Date().toDateString(),
         name: user.name,
-      });
+      };
+      io.to(data.room).emit('message', message);
+
+      await messageService.createMessage(message);
     });
 
     socket.on('disconnect', () => {

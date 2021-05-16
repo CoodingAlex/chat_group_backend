@@ -17,11 +17,13 @@ const mongoUri = `mongodb+srv://${db.user}:${db.password}@${db.host}/${db.databa
 connectDB(mongoUri);
 //Routes
 const authRouter = require('./routes/auth');
+const messagesRouter = require('./routes/message');
 app.use(express.json());
 app.use(cors({ origin: frontendUrl, credentials: true }));
 app.use(cookieParser());
 
 authRouter(app);
+messagesRouter(app);
 
 app.use(errorHandler);
 const io = socketio(server, {

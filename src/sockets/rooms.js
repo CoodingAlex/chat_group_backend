@@ -14,6 +14,7 @@ function roomExists(name) {
   }
   return true;
 }
+
 function addRoom(name, description) {
   const existsRoom = rooms.filter((room) => room.name === name);
   if (existsRoom.length === 0) {
